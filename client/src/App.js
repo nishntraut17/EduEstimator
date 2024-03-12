@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Add from './pages/Add';
 import Predict from './pages/Predict';
 import RootLayout from './pages/RootLayout';
+import Temp from './pages/Temp';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
+        <Route path='/temp' element={<Temp />} />
       </Routes>
     </Router>
   );

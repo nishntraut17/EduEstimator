@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const Predict = () => {
     const [formData, setFormData] = useState({
@@ -10,6 +12,7 @@ const Predict = () => {
         branch: '',
         home_university: '',
     });
+    const [colleges, setColleges] = useState([]);
     const [responseData, setResponseData] = useState(null);
 
     const handleChange = (e) => {
@@ -18,6 +21,18 @@ const Predict = () => {
             ...formData,
             [name]: value
         });
+    };
+
+    const exportToPDF = () => {
+        const doc = new jsPDF();
+
+        autoTable(doc, {
+            head: [['College']],
+            body: colleges.map(college => [college]),
+        });
+
+        // Save the PDF
+        doc.save("table.pdf");
     };
 
     const handleSubmit = async (e) => {
@@ -31,6 +46,7 @@ const Predict = () => {
                 }
             });
             setResponseData(response.data);
+            setColleges(response.data.eligible_colleges);
             toast.success("Application Sent Successfully, Your Request Will be processed By Admin");
         } catch (error) {
             toast.error("Unable to send application");
@@ -118,7 +134,7 @@ const Predict = () => {
             )}
 
             {responseData && (
-                <div className="bg-white shadow-md rounded px-8 py-6 mt-20">
+                <div className="bg-white shadow-md rounded px-8 py-6 mt-8">
                     <h2 className="text-3xl font-bold mb-4 ">Prediction</h2>
                     <div className="mb-6">
                         <p className="text-lg mb-2">Marks: {responseData.marks}</p>
@@ -137,6 +153,7 @@ const Predict = () => {
                             ))}
                         </ul>
                     </div>
+                    <button onClick={exportToPDF} className="block w-full bg-indigo-600 border border-transparent rounded-md py-2 px-4 text-white font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-6">Export to PDF</button>
                 </div>
             )}
         </div>
